@@ -1,6 +1,5 @@
 import React from "react";
-import styled from "styled-components";
-
+import Button from "@material-ui/core/Button";
 import firebase from "../../config/firebase";
 
 const SignOutButton = () => {
@@ -14,23 +13,16 @@ const SignOutButton = () => {
     }
   };
 
-  return <Button onClick={() => signOut()}>Sign out</Button>;
+  return (
+    <Button
+      type="button"
+      variant="outlined"
+      color="primary"
+      onClick={() => signOut()}
+    >
+      Sign out
+    </Button>
+  );
 };
 
 export default SignOutButton;
-
-const Button = styled.button`
-  background-color: #00000020;
-  padding: 10px 0;
-  width: 160px;
-  border: none;
-  border-radius: 30px;
-  color: #00000060;
-  font-weight: bold;
-  font-family: Segoe UI, sans-serif;
-  cursor: pointer;
-
-  :focus {
-    outline: none;
-  }
-`;

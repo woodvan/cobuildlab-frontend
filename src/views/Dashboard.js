@@ -1,36 +1,88 @@
 import React, { useEffect, useState } from "react";
 import SignOutButton from "../components/forms/SignOutButton";
-import styled from "styled-components";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
+import Container from "@material-ui/core/Container";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import Alert from "@material-ui/lab/Alert";
+import Typography from "@material-ui/core/Typography";
+import Modal from "@material-ui/core/Modal";
+import Box from "@material-ui/core/Box";
+import { makeStyles } from "@material-ui/core/styles";
 import {
   getTasks,
   createTask,
   removeTask,
   updateTask,
 } from "../controllers/task.controller";
-import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
-import TextareaAutosize from "@mui/base/TextareaAutosize";
-import Alert from "@mui/material/Alert";
+import FormControl from "@material-ui/core/FormControl";
+import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-};
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(4),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  signOutButton: {
+    position: "absolute",
+    display: "flex",
+    top: theme.spacing(2),
+    right: theme.spacing(2),
+  },
+  buttonContainer: {
+    display: "flex",
+    justifyContent: "space-around",
+    marginTop: theme.spacing(4),
+  },
+  modal: {
+    position: "absolute",
+    backgroundColor: "white",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80vw",
+    textAlign: "center",
+    alignItems: "center",
+    maxWidth: 600,
+    margin: theme.spacing(4),
+    padding: theme.spacing(4),
+  },
+  title: { marginBottom: 20 },
+  formControl: {
+    height: 100,
+    padding: 12,
+    fontSize: 14,
+    width: "70vw",
+    maxWidth: 500,
+  },
+  description: {
+    padding: theme.spacing(1),
+  },
+  task: {
+    width: "70vw",
+    height: 50,
+    padding: 10,
+    margin: "10px auto",
+    borderRadius: 8,
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    boxShadow:
+      "0px 5px 20px rgba(31, 47, 71, 0.15),  0px 1px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 0.5px rgba(255, 255, 255, 0.4)",
+  },
+  subTitle: {
+    display: "flex",
+    justifyContent: "space-between",
+    width: "70vw",
+    marginTop: 50,
+  },
+}));
 
 const Dashboard = ({ userId }) => {
+  const classes = useStyles();
   const [openModal, setOpenModal] = useState(false);
   const [_item, setItem] = useState({});
   const [toggle, setToggle] = useState(false);
@@ -125,175 +177,173 @@ const Dashboard = ({ userId }) => {
   const TaskModal = ({ item }) => {
     return (
       <Modal open={openModal}>
-        <Box sx={{ ...style, width: "60vw", maxWidth: "800px" }}>
+        <div className={classes.modal}>
           <form
             id="createTask"
             onSubmit={toggle ? handleSubmitUpdate : handleSubmitCreate}
           >
-            <Box
-              sx={{
-                margin: 2,
-                maxWidth: "800px",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <FormControl sx={{ marginBottom: 4 }}>
-                <p>Title</p>
+            <div>
+              <FormControl className={classes.formControl}>
+                <Typography component="h1" variant="h6">
+                  Title
+                </Typography>
                 <TextField
                   id="title"
                   color="primary"
                   placeholder="Please input task title"
                   defaultValue={item?.title}
-                />
-              </FormControl>
-              <FormControl>
-                <p>Description</p>
-                <TextareaAutosize
-                  aria-label="description"
-                  placeholder="Please input description"
-                  defaultValue={item?.description}
-                  style={{ height: 100, padding: 12, fontSize: 14 }}
-                />
-              </FormControl>
-              {error && (
-                <Alert
-                  onClose={() => setError(null)}
-                  sx={{
-                    marginTop: "20px",
-                  }}
+                  fullWidth
                   variant="outlined"
-                  severity="warning"
-                >
-                  {error}
-                </Alert>
-              )}
-            </Box>
+                />
+              </FormControl>
+            </div>
+            <FormControl className={classes.formControl}>
+              <Typography component="h1" variant="h6">
+                Description
+              </Typography>
+              <TextareaAutosize
+                aria-label="description"
+                placeholder="Please input description"
+                defaultValue={item?.description}
+                className={classes.description}
+                minRows={8}
+              />
+            </FormControl>
+            {error && (
+              <Alert
+                onClose={() => setError(null)}
+                sx={{
+                  marginTop: "20px",
+                }}
+                variant="outlined"
+                severity="warning"
+              >
+                {error}
+              </Alert>
+            )}
           </form>
-          <ButtonContainer>
-            <Button variant="contained" onClick={() => setOpenModal(false)}>
+          <div className={classes.buttonContainer}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setOpenModal(false);
+                setItem(null);
+              }}
+            >
               Cancel
             </Button>
             <Button variant="contained" type="submit" form="createTask">
               Save
             </Button>
-          </ButtonContainer>
-        </Box>
+          </div>
+        </div>
       </Modal>
     );
   };
 
   return !loading ? (
     <React.Fragment>
-      <SignOutButtonContainer>
+      <div className={classes.signOutButton}>
         <SignOutButton />
-      </SignOutButtonContainer>
-      <Title style={{ marginBottom: "60px" }}>
-        Task Management Application
-      </Title>
-      <Title
-        style={{ fontSize: "20px", textAlign: "left", position: "relative" }}
-      >
-        Task List
-        <Button
-          variant="contained"
-          style={{
-            position: "absolute",
-            width: "160px",
-            right: 0,
-          }}
-          onClick={() => {
-            setOpenModal(true);
-            setToggle(false);
-          }}
-        >
-          Create Task
-        </Button>
-      </Title>
+      </div>
+      <Container component="main" maxWidth="xl">
+        <div className={classes.paper}>
+          <Typography component="h1" variant="h3" className={classes.title}>
+            Task Management Application
+          </Typography>
+          <div className={classes.subTitle}>
+            <Typography component="h1" variant="h6">
+              Task List
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setOpenModal(true);
+                setToggle(false);
+              }}
+            >
+              Create Task
+            </Button>
+          </div>
 
-      {taskList && taskList.length ? (
-        taskList.map((item, id) => (
-          <Task key={id}>
-            <TaskTitle>{item.title}</TaskTitle>
-            <Stack direction="row" spacing={2} height={28}>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => {
-                  setItem(item);
-                  setOpenModal(true);
-                  setToggle(true);
-                }}
-              >
-                Edit
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                color="success"
-                onClick={() => {
-                  MarkAsDone(item);
-                }}
-              >
-                Done
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                color="error"
-                onClick={() => RemoveTask(item)}
-              >
-                Remove
-              </Button>
-            </Stack>
-          </Task>
-        ))
-      ) : (
-        <Task>No Items</Task>
-      )}
-      <Title
-        style={{
-          fontSize: "20px",
-          textAlign: "left",
-          marginTop: "60px",
-        }}
-      >
-        Done
-      </Title>
-      {doneList && doneList.length ? (
-        doneList.map((item, id) => (
-          <Task key={id}>
-            <TaskTitle>{item.title}</TaskTitle>
-            <Stack direction="row" spacing={2} height={40} mt={1}>
-              <Button
-                size="small"
-                variant="outlined"
-                color="error"
-                onClick={() => RemoveTask(item)}
-              >
-                Remove
-              </Button>
-            </Stack>
-          </Task>
-        ))
-      ) : (
-        <Task>No Items</Task>
-      )}
-      <TaskModal item={_item} />
-      {error2 && (
-        <Alert
-          onClose={() => setError(null)}
-          sx={{
-            width: "400px",
-            position: "absolute",
-            bottom: "30px",
-          }}
-          variant="outlined"
-          severity="warning"
-        >
-          {error2}
-        </Alert>
-      )}
+          {taskList && taskList.length ? (
+            taskList.map((item, id) => (
+              <Box className={classes.task} key={id}>
+                <Typography>{item.title}</Typography>
+                <Grid>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => {
+                      setItem(item);
+                      setOpenModal(true);
+                      setToggle(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => {
+                      MarkAsDone(item);
+                    }}
+                  >
+                    Done
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => RemoveTask(item)}
+                  >
+                    Remove
+                  </Button>
+                </Grid>
+              </Box>
+            ))
+          ) : (
+            <Box className={classes.task}>No Items</Box>
+          )}
+          <Typography component="h1" variant="h6" className={classes.subTitle}>
+            Done
+          </Typography>
+          {doneList && doneList.length ? (
+            doneList.map((item, id) => (
+              <Box className={classes.task} key={id}>
+                <Typography>{item.title}</Typography>
+                <Grid>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => RemoveTask(item)}
+                  >
+                    Remove
+                  </Button>
+                </Grid>
+              </Box>
+            ))
+          ) : (
+            <Box className={classes.task}>No Items</Box>
+          )}
+          {error2 && (
+            <Alert
+              onClose={() => setError(null)}
+              sx={{
+                position: "absolute",
+                bottom: "30px",
+              }}
+              variant="outlined"
+              severity="warning"
+            >
+              {error2}
+            </Alert>
+          )}
+        </div>
+        <TaskModal item={_item} />
+      </Container>
     </React.Fragment>
   ) : (
     <TextField fontSize="lg" sx={{ textAlign: "center" }}>
@@ -301,52 +351,5 @@ const Dashboard = ({ userId }) => {
     </TextField>
   );
 };
-
-const SignOutButtonContainer = styled.div`
-  position: absolute;
-  display: flex;
-  top: 10px;
-  right: 10px;
-`;
-
-const Title = styled.h1`
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 40px;
-  line-height: 48px;
-  color: #000;
-  text-align: center;
-  width: 70vw;
-`;
-
-const Task = styled.div`
-  width: 70vw;
-  height: 60px;
-  padding: 0 10px;
-  font-weight: 400;
-  margin: 10px auto;
-  // border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0px 5px 20px rgba(31, 47, 71, 0.15),
-    0px 1px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 0.5px rgba(255, 255, 255, 0.4);
-`;
-
-const TaskTitle = styled.p`
-  margin-left: 10px;
-  font-size: 20px;
-  font-weight: 400;
-  border-radius: 8px;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-top: 30px;
-`;
 
 export default Dashboard;

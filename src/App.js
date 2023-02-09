@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
-import styled from "styled-components";
 import firebase from "../src/config/firebase";
 import "firebase/auth";
 
 import SignUpForm from "./components/forms/SignUp";
 import SignInForm from "./components/forms/SignIn";
 import Dashboard from "./views/Dashboard";
+import { Container } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    paddingTop: 150,
+  },
+}));
 
 export default function App() {
+  const classes = useStyles();
   const [currentUser, setCurrentUser] = useState(null);
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +36,7 @@ export default function App() {
 
   return (
     !loading && (
-      <Wrapper>
+      <Container className={classes.container}>
         <Routes>
           <Route
             path="//*"
@@ -57,15 +65,7 @@ export default function App() {
             element={currentUser ? <Navigate to="/" /> : <SignInForm />}
           />
         </Routes>
-      </Wrapper>
+      </Container>
     )
   );
 }
-
-const Wrapper = styled.div`
-  padding-top: 150px;
-  margin: 0 auto;
-  display: grid;
-  justify-items: center;
-  padding-bottom: 100px;
-`;
